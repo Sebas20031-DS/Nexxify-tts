@@ -1,77 +1,53 @@
-import os
-import shutil
 import mlflow
+import shutil
 from pathlib import Path
-import numpy as np
-from src.preprocess_text import normalize_text, tokenize, text_to_ids
-from src.preprocess_audio import load_audio, audio_to_mel
-from src.mlflow_setup import create_experiment_with_postgres_and_artifact
+from src.prepare_dataset import prepare_css10
+from src.mlflow_setup import mlflow_config
 
+# ================================
+# Configuración de MLflow
+# ================================
+mlflow_config(
+    exp_name="tts_preprocessing",
+)
 
-# Configurar experimento en MLflow
-tracking_uri = "postgresql://postgres:2724@localhost:5432/mlflow_db" 
-mlflow.set_tracking_uri(tracking_uri) 
+# ================================
+# Definición de vocabulario (incluye caracteres en español)
+# ================================
+VOCAB = {ch: i for i, ch in enumerate("abcdefghijklmnopqrstuvwxyzáéíóúñü,.!? ")} 
 
-artifact_root = Path(r"C:/Users/sebas/Documents/Projects/TTS/tts_project/mlflow/artifacts").as_uri()
-exp_name = "tts_preprocessing"
-
-# Carpeta temporal para guardar archivos antes de loggearlos
-temp_dir = Path(r"C:/Users/sebas/Documents/Projects/TTS/tts_project/mlflow/temp")
-temp_dir.mkdir(parents=True, exist_ok=True)
-
-exp_id = create_experiment_with_postgres_and_artifact(exp_name, tracking_uri, artifact_root)
-mlflow.set_experiment(exp_name)
-
-
-# Simulamos vocabulario simple
-VOCAB = {ch: i for i, ch in enumerate("abcdefghijklmnopqrstuvwxyz,.!? ")} 
-
-with mlflow.start_run(run_name="preprocess_sample"):
-
-    # Parámetros
-    sr = 22050
-    n_fft = 1024
-    hop_length = 256
-    n_mels = 80
-
+# ================================
+# Ejecución de preprocessing
+# ================================
+with mlflow.start_run(run_name="css10_preprocess"):
     mlflow.log_params({
-        "sample_rate": sr,
-        "n_fft": n_fft,
-        "hop_length": hop_length,
-        "n_mels": n_mels,
+        "sample_rate": 22050,
+        "n_fft": 1024,
+        "hop_length": 256,
+        "n_mels": 80,
         "tokenization": "characters",
-        "vocab_size": len(VOCAB)
+        "vocab_size": len(VOCAB),
+        "mel_normalization": "[-1,1]"
     })
     
-    mlflow.set_tag("tokenization", "characters")
+    mlflow.set_tag("dataset", "CSS10 Spanish")
 
-    # Procesar texto
-    text = "¡Hola, este es un ejemplo de TTS!"
-    norm_text = normalize_text(text)
-    tokens = tokenize(norm_text)
-    ids = text_to_ids(tokens, VOCAB)
-    mlflow.log_param("text_length", len(tokens))
-    
-    # Guardar IDs temporalmente y como artefacto
-    text_ids_path = temp_dir / "text_ids.npy"
-    np.save(text_ids_path, ids)
-    mlflow.log_artifact(str(text_ids_path))
+    # Rutas de entrada/salida
+    raw_path = "data/raw/CSS10_spanish"
+    out_path = "data/processed/css10"
 
+    # Preprocesar dataset completo
+    prepare_css10(raw_path, out_path, VOCAB, sr=22050, n_fft=1024, hop_length=256, n_mels=80)
 
-    # Procesar audio
-    audio_path = "data/raw/example.wav"
-    audio = load_audio(audio_path, sr=sr)
-    mel = audio_to_mel(audio, sr=sr, n_fft=n_fft, hop_length=hop_length, n_mels=n_mels)
+    # Guardar metadata en MLflow
+    mlflow.log_param("output_path", out_path)
 
-    # Guardar espectrograma como artefacto
-    mel_path = temp_dir / "mel.npy"
-    np.save(mel_path, mel)
-    mlflow.log_artifact(str(mel_path))
+    print(f"✅ Preprocesamiento de CSS10 completo. Archivos guardados en: {out_path}")
 
-    print("Preprocesamiento completo ✅")
 
 # Eliminar mlruns (vacio) automáticamente tras la ejecución
 mlruns_path = Path("mlruns")
 if mlruns_path.exists() and mlruns_path.is_dir():
     shutil.rmtree(mlruns_path)
     print("Directorio 'mlruns' eliminado automáticamente 🧹")
+    

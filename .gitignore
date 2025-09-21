@@ -1,0 +1,6 @@
+# Ignorar carpetas de datos y artefactos
+/data/
+/mlflow/
+
+# Ignorar entorno conda
+/tts_env/
