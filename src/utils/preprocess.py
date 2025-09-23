@@ -2,8 +2,8 @@ import os
 import csv
 from pathlib import Path
 import numpy as np
-from src.preprocess_text import normalize_text, tokenize, text_to_ids
-from src.preprocess_audio import load_audio, audio_to_mel
+from utils.text import normalize_text, tokenize, text_to_ids
+from utils.audio import load_audio, audio_to_mel
 
 def prepare_css10(raw_path, out_path, vocab, sr=22050, n_fft=1024, hop_length=256, n_mels=80):
     raw_path = Path(raw_path)

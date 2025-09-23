@@ -1,8 +1,8 @@
 import mlflow
 import shutil
 from pathlib import Path
-from src.prepare_dataset import prepare_css10
-from src.mlflow_setup import mlflow_config
+from utils.preprocess import prepare_css10
+from utils.mlflow import mlflow_config
 
 # ================================
 # Configuración de MLflow
