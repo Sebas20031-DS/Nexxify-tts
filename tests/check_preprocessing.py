@@ -3,8 +3,8 @@
 import csv
 from pathlib import Path
 import numpy as np
-from utils.text import normalize_text, tokenize, text_to_ids
-from utils.audio import load_audio, audio_to_mel
+from src.preprocessing.text import normalize_text, tokenize, text_to_ids
+from src.preprocessing.audio import load_audio, audio_to_mel
 
 # ===== CONFIGURACIÓN =====
 RAW_PATH = Path("data/raw/CSS10_spanish")

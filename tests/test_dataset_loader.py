@@ -2,7 +2,7 @@
 
 import torch
 from torch.utils.data import DataLoader
-from src.dataset_loader import TTSDataset, collate_fn
+from src.model_selection.dataset_loader import TTSDataset, collate_fn
 
 def main():
     metadata_path = "data/processed/css10/metadata.csv"
