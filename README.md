@@ -65,11 +65,6 @@ python scripts/build_vocab.py
 python main.py
 ```
 
-## Privacidad y seguridad
-
-- Este repositorio excluye `data/`, `mlruns/` y artefactos grandes en `.gitignore`.
-- No incluyas claves de API, credenciales o rutas absolutas en archivos rastreados por git.
-
 ## Enlaces útiles
 
 - CSS10 dataset: https://github.com/Kyubyong/css10
