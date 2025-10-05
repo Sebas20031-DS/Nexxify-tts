@@ -4,3 +4,46 @@
 
 # Ignorar entorno conda
 /tts_env/
+
+# Python: caches y archivos compilados
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# Virtual environments and env files
+venv/
+env/
+.env
+.env.*
+
+# IDEs
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Model checkpoints, logs y artifacts de entrenamiento
+*.pt
+*.pth
+*.ckpt
+mlruns/
+mlflow/
+logs/
+*.log
+
+# Datos brutos y artefactos pesados que no deben subirse
+/data/raw/
+/data/artifacts/
+
+# Documentación privada / notas locales
+roadmap.md
+
+# Build/dist
+dist/
+build/
+

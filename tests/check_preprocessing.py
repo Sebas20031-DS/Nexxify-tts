@@ -3,7 +3,7 @@
 import csv
 from pathlib import Path
 import numpy as np
-from src.preprocessing.text import normalize_text, tokenize, text_to_ids
+from src.preprocessing.text import normalize_text, text_to_phonemes, tokenize_phonemes, text_to_ids
 from src.preprocessing.audio import load_audio, audio_to_mel
 
 # ===== CONFIGURACIÓN =====
